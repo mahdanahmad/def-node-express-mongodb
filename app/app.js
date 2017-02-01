@@ -31,7 +31,7 @@ app.use(function(req, res, next) {
 if (process.env.APP_ENV === 'development') {
     app.use(function(err, req, res, next) {
         res.status(err.status || 500);
-        res.render('error', {
+        res.json({
             message: err.message,
             error: err
         });
@@ -42,7 +42,7 @@ if (process.env.APP_ENV === 'development') {
 // no stacktraces leaked to operator
 app.use(function(err, req, res, next) {
     res.status(err.status || 500);
-    res.render('error', {
+    res.json({
         message: err.message,
         error: {}
     });
