@@ -6,37 +6,37 @@
 
 require('dotenv').config();
 
-let db      = require('./connection');
-let app     = require('./app');
-let http    = require('http');
+const db	= require('./connection');
+const app	= require('./app');
+const http	= require('http');
 
 /**
  * Get port from environment and store in Express.
  */
 
-let port = normalizePort(process.env.PORT || '3010');
+const port	= normalizePort(process.env.PORT || '3010');
 app.set('port', port);
 
 /**
  * Create HTTP server.
  */
 
-let server = http.createServer(app);
+const server	= http.createServer(app);
 
 /**
  * Listen on provided port, on all network interfaces.
  */
-let auth    = (process.env.DB_USERNAME !== '' || process.env.DB_PASSWORD !== '') ? process.env.DB_USERNAME + ':' + process.env.DB_PASSWORD + '@' : '';
-let db_url  = 'mongodb://' + auth + process.env.DB_HOST + ':' + process.env.DB_PORT +  '/' + process.env.DB_DATABASE;
-db.connect(db_url, function(err) {
-    if (err) {
-        console.error('Unable to connect to Mongo.');
-        process.exit(1);
-    } else {
-        server.listen(port);
-        server.on('error', onError);
-        server.on('listening', onListening);
-    }
+const auth		= (process.env.DB_USERNAME !== '' || process.env.DB_PASSWORD !== '') ? process.env.DB_USERNAME + ':' + process.env.DB_PASSWORD + '@' : '';
+const db_url	= 'mongodb://' + auth + process.env.DB_HOST + ':' + process.env.DB_PORT +  '/' + process.env.DB_DATABASE;
+db.connect(db_url, (err) => {
+	if (err) {
+		console.error('Unable to connect to Mongo.');
+		process.exit(1);
+	} else {
+		server.listen(port);
+		server.on('error', onError);
+		server.on('listening', onListening);
+	}
 });
 
 /**
@@ -44,11 +44,11 @@ db.connect(db_url, function(err) {
  */
 
 function normalizePort(val) {
-    let port = parseInt(val, 10);
+	const port	= parseInt(val, 10);
 
-    if (isNaN(port)) { return val; }
-    if (port >= 0) { return port; }
-    return false;
+	if (isNaN(port)) { return val; }
+	if (port >= 0) { return port; }
+	return false;
 }
 
 /**
@@ -56,25 +56,24 @@ function normalizePort(val) {
  */
 
 function onError(error) {
-    if (error.syscall !== 'listen') { throw error; }
+	if (error.syscall !== 'listen') { throw error; }
 
-    let bind = typeof port === 'string' ? 'Pipe ' + port : 'Port ' + port;
+	const bind = typeof port === 'string' ? 'Pipe ' + port : 'Port ' + port;
 
     // handle specific listen errors with friendly messages
-    switch (error.code) {
-        case 'EACCES':
-            console.error(bind + ' requires elevated privileges');
-            process.exit(1);
-            break;
+	switch (error.code) {
+	case 'EACCES':
+		console.error(bind + ' requires elevated privileges');
+		process.exit(1);
+		break;
 
-        case 'EADDRINUSE':
-            console.error(bind + ' is already in use');
-            process.exit(1);
-            break;
+	case 'EADDRINUSE':
+		console.error(bind + ' is already in use');
+		process.exit(1);
+		break;
 
-        default:
-            throw error;
-    }
+	default: throw error;
+	}
 }
 
 /**
@@ -82,7 +81,7 @@ function onError(error) {
  */
 
 function onListening() {
-    let addr = server.address();
-    let bind = typeof addr === 'string' ? 'pipe ' + addr : 'port ' + addr.port;
-    console.info('Listening on ' + bind);
+	const addr = server.address();
+	const bind = typeof addr === 'string' ? 'pipe ' + addr : 'port ' + addr.port;
+	console.info('Listening on ' + bind);
 }
