@@ -3,20 +3,19 @@ const async	= require('async');
 const _		= require('lodash');
 
 class Model {
-	constructor(tableName, fillable, required, preserved, hidden, ascertein, ...opts) {
+	constructor(tableName, fillable, required, preserved, hidden, ascertain, ...opts) {
 		this.tableName  = tableName;
 		this.fillable   = fillable;
 		this.required   = required;
 		this.preserved  = preserved;
 		this.hidden		= _.assign({}, _.zipObject(hidden, _.times(hidden.length, _.constant(0))), { created_at: 0, updated_at: 0 });
-		this.ascertein	= ascertein;
-		// this.ascertein	= !_.isNil(ascertein) ? _.chain(ascertein).map((o, key) => ({ target: key, value: o })).value() : {};
+		this.ascertain	= ascertain;
 	}
 
 	insertOne(data, callback) {
 		const missing   = _.difference(this.required, _.chain(data).pickBy((o) => (!_.isEmpty(o))).keys().value());
 		if (missing.length === 0) {
-			async.mapValues(this.ascertein, (tableTarget, dataKey, filterCallback) => {
+			async.mapValues(_.pickBy(this.ascertain, (o, key) => (_.includes(_.keys(data), key))), (tableTarget, dataKey, filterCallback) => {
 				if (_.isArray(data[dataKey])) {
 					async.filter(_.uniq(data[dataKey]), (val, next) => {
 						db.getCollection(tableTarget).findOne({ _id: db.toObjectID(val), deleted_at: { $exists: false } }, (err, result) => {
@@ -87,7 +86,7 @@ class Model {
 	update(id, update, callback) {
 		let cherry    = _.pickBy(update, (o, key) => (_.chain(this.fillable).difference(this.preserved).includes(key).value() && !_.isEmpty(o)));
 		if (!_.isEmpty(cherry)) {
-			async.mapValues(_.pickBy(this.ascertein, (o, key) => (_.includes(_.keys(cherry), key))), (tableTarget, dataKey, filterCallback) => {
+			async.mapValues(_.pickBy(this.ascertain, (o, key) => (_.includes(_.keys(cherry), key))), (tableTarget, dataKey, filterCallback) => {
 				if (_.isArray(cherry[dataKey])) {
 					async.filter(_.uniq(cherry[dataKey]), (val, next) => {
 						db.getCollection(tableTarget).findOne({ _id: db.toObjectID(val), deleted_at: { $exists: false } }, (err, result) => {
