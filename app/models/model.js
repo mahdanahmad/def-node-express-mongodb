@@ -32,7 +32,7 @@ class Model {
 			}, (err, results) => {
 				if (err) { return callback(err); }
 
-				const filtered = _.chain(results).pickBy((o) => (_.isNil(o) || _.isEmpty(o))).keys().value();
+				const filtered = _.chain(results).pickBy((o) => (_.isNil(o) || _.isEmpty(o))).intersection(this.required).keys().value();
 				if (filtered.length > 0) {
 					callback('Missing required field(s) : {' + filtered.join(', ') + '}.');
 				} else {
